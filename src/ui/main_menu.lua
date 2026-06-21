@@ -1,11 +1,14 @@
 local Button   = require "src.ui.button"
 local State    = require "src.ui.state"
 local Settings = require "src.settings.settings"
+local rgb_text = require "src.ui.utils.rgb_text"
 
 local MainMenu = {}
 
-local _buttons    = {}
-local _font       = nil
+local _buttons     = {}
+local _github_icon = nil
+local _github_img  = nil
+local _font        = nil
 local _title_font = nil
 local _hint_font  = nil
 local _last_w, _last_h = 0, 0
@@ -23,16 +26,27 @@ local function rebuild()
         Button.new(cx, startY,                bw, bh, "Play",
             function() State.set(State.IN_GAME) end),
         Button.new(cx, startY + (bh + gap),   bw, bh, "Settings",
-            function() end),  -- placeholder
+            function() State.set(State.SETTINGS) end),
         Button.new(cx, startY + (bh + gap)*2, bw, bh, "Quit",
             function() Settings.save(); love.event.quit() end),
+    }
+
+    local size   = 32
+    local margin = 14
+    _github_icon = {
+        size    = size,
+        x       = sw - size - margin,
+        y       = sh - size - margin,
+        hovered = false,
+        onClick = function() love.system.openURL("https://github.com/kwlew/TDLove") end,
     }
 end
 
 function MainMenu.load()
     _font       = love.graphics.newFont("assets/fonts/Afacad-Flux/AfacadFlux-Bold.ttf",      22)
     _title_font = love.graphics.newFont("assets/fonts/Afacad-Flux/AfacadFlux-ExtraBold.ttf", 56)
-    _hint_font  = love.graphics.newFont("assets/fonts/Afacad-Flux/AfacadFlux-Regular.ttf",   14)
+    _hint_font  = love.graphics.newFont("assets/fonts/Fira-Sans/FiraSans-SemiBold.ttf",   14)
+    _github_img = love.graphics.newImage("assets/images/socials/github.png")
     rebuild()
 end
 
@@ -42,6 +56,8 @@ function MainMenu.update(dt)
 
     local mx, my = love.mouse.getPosition()
     for _, btn in ipairs(_buttons) do btn:update(mx, my) end
+    _github_icon.hovered = mx >= _github_icon.x and mx <= _github_icon.x + _github_icon.size
+                       and my >= _github_icon.y and my <= _github_icon.y + _github_icon.size
 end
 
 function MainMenu.draw()
@@ -60,8 +76,7 @@ function MainMenu.draw()
     love.graphics.setColor(0.4, 0.7, 1, 0.18)
     love.graphics.rectangle("line", tx - 28, ty - 14, tw + 56, th + 28, 12)
 
-    love.graphics.setColor(1, 1, 1, 0.92)
-    love.graphics.print(title, tx, ty)
+    rgb_text.draw(title, tx, ty)
 
     -- Subtitle
     love.graphics.setFont(_hint_font)
@@ -71,6 +86,11 @@ function MainMenu.draw()
 
     -- Buttons
     for _, btn in ipairs(_buttons) do btn:draw(_font) end
+
+    -- GitHub icon (bottom-right)
+    local scale = _github_icon.size / _github_img:getWidth()
+    love.graphics.setColor(1, 1, 1, _github_icon.hovered and 1 or 0.55)
+    love.graphics.draw(_github_img, _github_icon.x, _github_icon.y, 0, scale, scale)
 
     -- Bottom hint
     love.graphics.setFont(_hint_font)
@@ -87,6 +107,7 @@ end
 
 function MainMenu.mousepressed(x, y, btn)
     for _, b in ipairs(_buttons) do b:mousepressed(x, y, btn) end
+    if btn == 1 and _github_icon.hovered then _github_icon.onClick() end
 end
 
 return MainMenu

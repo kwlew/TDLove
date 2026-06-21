@@ -7,7 +7,7 @@ local _hint_font = nil
 
 function InGame.load()
     _hud_font  = love.graphics.newFont("assets/fonts/Afacad-Flux/AfacadFlux-Bold.ttf",    22)
-    _hint_font = love.graphics.newFont("assets/fonts/Afacad-Flux/AfacadFlux-Regular.ttf", 14)
+    _hint_font = love.graphics.newFont("assets/fonts/Fira-Sans/FiraSans-SemiBold.ttf", 14)
 end
 
 function InGame.update(dt)

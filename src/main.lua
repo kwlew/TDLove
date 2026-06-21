@@ -1,9 +1,10 @@
-local Debug    = require "src.settings.debug"
-local Settings = require "src.settings.settings"
-local Window   = require "src.settings.window"
-local State    = require "src.ui.state"
-local MainMenu = require "src.ui.main_menu"
-local InGame   = require "src.ui.in_game"
+local Debug      = require "src.settings.debug"
+local Settings   = require "src.settings.settings"
+local Window     = require "src.settings.window"
+local State      = require "src.ui.state"
+local MainMenu   = require "src.ui.main_menu"
+local InGame     = require "src.ui.in_game"
+local SettingsUI = require "src.ui.settingsUI"
 
 local screens = {}
 
@@ -13,10 +14,12 @@ function love.load()
 
     MainMenu.load()
     InGame.load()
+    SettingsUI.load()
 
     screens = {
         [State.MAIN_MENU] = MainMenu,
         [State.IN_GAME]   = InGame,
+        [State.SETTINGS]  = SettingsUI,
     }
 
     Debug.load()
@@ -55,4 +58,9 @@ end
 function love.mousepressed(x, y, btn)
     local screen = screens[State.get()]
     if screen and screen.mousepressed then screen.mousepressed(x, y, btn) end
+end
+
+function love.mousereleased(x, y, btn)
+    local screen = screens[State.get()]
+    if screen and screen.mousereleased then screen.mousereleased(x, y, btn) end
 end
