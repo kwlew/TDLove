@@ -1,3 +1,5 @@
+local draw   = require "src.ui.utils.draw"
+local theme  = require "src.ui.utils.theme"
 local Button = {}
 Button.__index = Button
 
@@ -16,18 +18,12 @@ function Button:update(mx, my)
 end
 
 function Button:draw(font)
-    if self.hovered then
-        love.graphics.setColor(0.30, 0.60, 1.00, 0.90)
-    else
-        love.graphics.setColor(0.12, 0.30, 0.65, 0.70)
-    end
-    love.graphics.rectangle("fill", self.x, self.y, self.w, self.h, 6)
-
-    love.graphics.setColor(0.40, 0.70, 1.00, self.hovered and 0.80 or 0.40)
-    love.graphics.rectangle("line", self.x, self.y, self.w, self.h, 6)
+    local glow = self.hovered and theme.alpha.btn_glow or theme.alpha.btn_glow_dim
+    local fill = self.hovered and theme.color.btn_fill_hover or theme.color.btn_fill
+    draw.glow_rect(self.x, self.y, self.w, self.h, theme.size.btn_corner, fill, theme.color.glow, glow * theme.alpha.btn_border)
 
     love.graphics.setFont(font)
-    love.graphics.setColor(1, 1, 1, self.hovered and 1 or 0.85)
+    love.graphics.setColor(self.hovered and theme.color.text or theme.color.text_dim)
     local tw = font:getWidth(self.label)
     local th = font:getHeight()
     love.graphics.print(

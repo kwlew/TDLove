@@ -1,14 +1,17 @@
 local Settings = {}
 
 Settings.default = {
-    fps_cap = 999,
-    show_debug = true,
-    debug_fps = true,
-    debug_mem = true,
-    debug_ups = true,
+    fps_cap        = 999,
+    show_debug     = true,
+    debug_fps      = true,
+    debug_mem      = true,
+    debug_ups      = true,
     debug_playtime = true,
-    volume = 1.0,
-    fullscreen = false,
+    volume         = 1.0,
+    music_volume   = 1.0,
+    sfx_volume     = 1.0,
+    fullscreen     = false,
+    theme          = "blue",
 }
 
 Settings._data = {}

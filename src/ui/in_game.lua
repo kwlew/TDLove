@@ -1,4 +1,6 @@
 local State = require "src.ui.state"
+local draw  = require "src.ui.utils.draw"
+local theme = require "src.ui.utils.theme"
 
 local InGame = {}
 
@@ -6,8 +8,8 @@ local _hud_font  = nil
 local _hint_font = nil
 
 function InGame.load()
-    _hud_font  = love.graphics.newFont("assets/fonts/Afacad-Flux/AfacadFlux-Bold.ttf",    22)
-    _hint_font = love.graphics.newFont("assets/fonts/Fira-Sans/FiraSans-SemiBold.ttf", 14)
+    _hud_font  = love.graphics.newFont(theme.font.afacad_bold,   theme.size.font_btn)
+    _hint_font = love.graphics.newFont(theme.font.fira_semibold, theme.size.font_hint)
 end
 
 function InGame.update(dt)
@@ -18,36 +20,35 @@ function InGame.draw()
     local sw, sh = love.graphics.getWidth(), love.graphics.getHeight()
 
     -- Top HUD bar (placeholder)
-    love.graphics.setColor(0.08, 0.14, 0.22, 0.92)
-    love.graphics.rectangle("fill", 0, 0, sw, 58)
-    love.graphics.setColor(0.3, 0.6, 1, 0.25)
-    love.graphics.rectangle("line", 0, 0, sw, 58)
+    love.graphics.setColor(theme.color.hud_fill)
+    love.graphics.rectangle("fill", 0, 0, sw, theme.size.hud_h)
+    draw.glow_hline(0, sw, theme.size.hud_h, theme.color.glow_hud, theme.alpha.hud_line)
 
     love.graphics.setFont(_hud_font)
-    love.graphics.setColor(1, 1, 1, 0.85)
-    love.graphics.print("Wave: 1", 20, 16)
+    love.graphics.setColor(theme.color.text_dim)
+    love.graphics.print("Wave: 1", theme.size.hud_wave_x, theme.size.hud_item_y)
 
-    love.graphics.setColor(0.9, 0.8, 0.2, 0.85)
-    love.graphics.print("Gold: 100", 160, 16)
+    love.graphics.setColor(theme.color.text_gold)
+    love.graphics.print("Gold: 100", theme.size.hud_gold_x, theme.size.hud_item_y)
 
-    love.graphics.setColor(0.3, 0.9, 0.4, 0.85)
-    love.graphics.print("Lives: 20", 320, 16)
+    love.graphics.setColor(theme.color.text_lives)
+    love.graphics.print("Lives: 20", theme.size.hud_lives_x, theme.size.hud_item_y)
 
     -- Center placeholder label
     love.graphics.setFont(_hud_font)
-    love.graphics.setColor(1, 1, 1, 0.12)
+    love.graphics.setColor(theme.color.text_faint)
     local msg = "[ Game World Placeholder ]"
-    love.graphics.print(msg, math.floor(sw / 2 - _hud_font:getWidth(msg) / 2), math.floor(sh / 2 - 11))
+    love.graphics.print(msg, math.floor(sw / 2 - _hud_font:getWidth(msg) / 2), math.floor(sh / 2 - theme.size.placeholder_y_offset))
 
     -- Bottom hint
     love.graphics.setFont(_hint_font)
-    love.graphics.setColor(1, 1, 1, 0.25)
-    love.graphics.print("Escape — Main Menu  •  F11 fullscreen  •  F1 debug", 10, sh - 24)
+    love.graphics.setColor(theme.color.text_hint)
+    love.graphics.print("Escape — Pause  •  F11 fullscreen  •  F1 debug", theme.size.hint_margin_x, sh - theme.size.hint_margin_bottom)
 end
 
 function InGame.keypressed(key)
     if key == "escape" then
-        State.set(State.MAIN_MENU)
+        State.set(State.PAUSED)
     end
 end
 

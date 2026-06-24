@@ -2,6 +2,8 @@ local Button   = require "src.ui.button"
 local State    = require "src.ui.state"
 local Settings = require "src.settings.settings"
 local rgb_text = require "src.ui.utils.rgb_text"
+local draw     = require "src.ui.utils.draw"
+local theme    = require "src.ui.utils.theme"
 
 local MainMenu = {}
 
@@ -17,22 +19,22 @@ local function rebuild()
     local sw, sh = love.graphics.getWidth(), love.graphics.getHeight()
     _last_w, _last_h = sw, sh
 
-    local bw, bh = 240, 54
+    local bw, bh = theme.size.btn_w, theme.size.btn_h
     local cx     = math.floor(sw / 2 - bw / 2)
-    local gap    = 16
-    local startY = math.floor(sh * 0.52)
+    local gap    = theme.size.btn_gap
+    local startY = math.floor(sh * theme.size.menu_btn_start_y)
 
     _buttons = {
         Button.new(cx, startY,                bw, bh, "Play",
             function() State.set(State.IN_GAME) end),
         Button.new(cx, startY + (bh + gap),   bw, bh, "Settings",
-            function() State.set(State.SETTINGS) end),
+            function() State.goSettings(State.MAIN_MENU) end),
         Button.new(cx, startY + (bh + gap)*2, bw, bh, "Quit",
             function() Settings.save(); love.event.quit() end),
     }
 
-    local size   = 32
-    local margin = 14
+    local size   = theme.size.github_size
+    local margin = theme.size.github_margin
     _github_icon = {
         size    = size,
         x       = sw - size - margin,
@@ -43,9 +45,9 @@ local function rebuild()
 end
 
 function MainMenu.load()
-    _font       = love.graphics.newFont("assets/fonts/Afacad-Flux/AfacadFlux-Bold.ttf",      22)
-    _title_font = love.graphics.newFont("assets/fonts/Afacad-Flux/AfacadFlux-ExtraBold.ttf", 56)
-    _hint_font  = love.graphics.newFont("assets/fonts/Fira-Sans/FiraSans-SemiBold.ttf",   14)
+    _font       = love.graphics.newFont(theme.font.afacad_bold,      theme.size.font_btn)
+    _title_font = love.graphics.newFont(theme.font.afacad_extrabold, theme.size.font_menu_title)
+    _hint_font  = love.graphics.newFont(theme.font.fira_semibold,    theme.size.font_hint)
     _github_img = love.graphics.newImage("assets/images/socials/github.png")
     rebuild()
 end
@@ -69,33 +71,31 @@ function MainMenu.draw()
     local tw = _title_font:getWidth(title)
     local th = _title_font:getHeight()
     local tx = math.floor(sw / 2 - tw / 2)
-    local ty = math.floor(sh * 0.22 - th / 2)
+    local ty = math.floor(sh * theme.size.menu_title_y - th / 2)
 
-    love.graphics.setColor(0.2, 0.5, 1, 0.12)
-    love.graphics.rectangle("fill", tx - 28, ty - 14, tw + 56, th + 28, 12)
-    love.graphics.setColor(0.4, 0.7, 1, 0.18)
-    love.graphics.rectangle("line", tx - 28, ty - 14, tw + 56, th + 28, 12)
+    local px, py = theme.size.title_pad_x, theme.size.title_pad_y
+    draw.glow_rect(tx - px, ty - py, tw + px * 2, th + py * 2, theme.size.title_corner, theme.color.title_box_fill, theme.color.glow_title, theme.alpha.title_box)
 
     rgb_text.draw(title, tx, ty)
 
     -- Subtitle
     love.graphics.setFont(_hint_font)
     local sub = "Tower Defense  •  Idle"
-    love.graphics.setColor(0.55, 0.75, 1, 0.45)
-    love.graphics.print(sub, math.floor(sw / 2 - _hint_font:getWidth(sub) / 2), ty + th + 6)
+    love.graphics.setColor(theme.color.text_subtitle)
+    love.graphics.print(sub, math.floor(sw / 2 - _hint_font:getWidth(sub) / 2), ty + th + theme.size.title_pad_y + theme.size.subtitle_gap)
 
     -- Buttons
     for _, btn in ipairs(_buttons) do btn:draw(_font) end
 
     -- GitHub icon (bottom-right)
     local scale = _github_icon.size / _github_img:getWidth()
-    love.graphics.setColor(1, 1, 1, _github_icon.hovered and 1 or 0.55)
+    love.graphics.setColor(_github_icon.hovered and theme.color.text or theme.color.github_dim)
     love.graphics.draw(_github_img, _github_icon.x, _github_icon.y, 0, scale, scale)
 
     -- Bottom hint
     love.graphics.setFont(_hint_font)
-    love.graphics.setColor(1, 1, 1, 0.25)
-    love.graphics.print("Escape to quit  •  F11 fullscreen  •  F1 debug", 10, sh - 24)
+    love.graphics.setColor(theme.color.text_hint)
+    love.graphics.print("Escape to quit  •  F11 fullscreen  •  F1 debug", theme.size.hint_margin_x, sh - theme.size.hint_margin_bottom)
 end
 
 function MainMenu.keypressed(key)

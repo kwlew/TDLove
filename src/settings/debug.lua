@@ -1,5 +1,6 @@
-local Debug = {}
+local Debug    = {}
 local Settings = require "src.settings.settings"
+local theme    = require "src.ui.utils.theme"
 
 Debug.flags = {
     debug_fps = nil,
@@ -10,15 +11,14 @@ Debug.flags = {
 
 Debug.config = {
     text = {
-        path = "assets/fonts/Afacad-Flux/AfacadFlux-ExtraBold.ttf",
-        size = 14,
-        background_color = {0, 0, 0, 0.10}
+        size             = 14,
+        background_color = {0, 0, 0, 0.10},
     }
 }
 Debug.font = nil
 
 function Debug.load()
-    Debug.font = love.graphics.newFont(Debug.config.text.path, Debug.config.text.size)
+    Debug.font = love.graphics.newFont(theme.font.afacad_extrabold, Debug.config.text.size)
     Debug.flags.debug_fps = Settings.get("debug_fps")
     Debug.flags.debug_mem = Settings.get("debug_mem")
     Debug.flags.debug_ups = Settings.get("debug_ups")
@@ -56,7 +56,7 @@ function Debug.draw()
     love.graphics.setFont(Debug.font)
     love.graphics.setColor(Debug.config.text.background_color)
     love.graphics.rectangle("fill", 6, 6, love.graphics.getFont():getWidth(text) + 10, 22, 3)
-    love.graphics.setColor(0, 255, 255, 1)
+    love.graphics.setColor(0, 1, 1, 1)
     love.graphics.print(text, 11, 9)
 end
 

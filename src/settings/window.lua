@@ -1,45 +1,36 @@
-local Window = {}
+local Window   = {}
 local Settings = require "src.settings.settings"
 
 Window.config = {
     unfocused_fps_cap = 60,
-    width = 1280,
-    height = 720,
-    title = "TD by kwlew",
-    icon_path = "assets/icon.png",
-    resizable = true,
-    min_width = 1280,
-    min_height = 720,
-    state = "main_menu",
 }
 
-function Window.load()
-    love.window.setTitle(Window.config.title)
-    love.window.setIcon(love.image.newImageData(Window.config.icon_path))
-    love.window.setMode(Window.config.width, Window.config.height, {
-        resizable = Window.config.resizable,
-        minwidth = Window.config.min_width,
-        minheight = Window.config.min_height,
-    })
-end
+local _frame_start = 0
 
 function Window.update()
-    Window.focusCheck()
+    local cap = Settings.get("fps_cap") or 999
+    if not love.window.hasFocus() then
+        cap = math.min(cap, Window.config.unfocused_fps_cap)
+    end
+
+    if cap < 999 then
+        local deadline  = _frame_start + 1 / cap
+        local remaining = deadline - love.timer.getTime()
+
+        -- Sleep for most of the wait so we don't burn CPU, then spin the last
+        -- millisecond for precision (love.timer.sleep is ~1ms accurate on Windows).
+        if remaining > 0.002 then
+            love.timer.sleep(remaining - 0.001)
+        end
+        while love.timer.getTime() < deadline do end
+    end
+
+    _frame_start = love.timer.getTime()
 end
 
 function Window.toggleFullscreen()
     local isFullscreen = love.window.getFullscreen()
     love.window.setFullscreen(not isFullscreen, "desktop")
-end
-
-function Window.focusCheck()
-    if not love.window.hasFocus() then
-        Window.setFps(Window.config.unfocused_fps_cap)
-    end
-end
-
-function Window.setFps(cap)
-    love.timer.sleep(1 / cap)
 end
 
 function Window.getDimensions()
