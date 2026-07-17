@@ -29,8 +29,15 @@ function Window.update()
 end
 
 function Window.toggleFullscreen()
+    local sw, sh = love.graphics.getWidth(), love.graphics.getHeight()
+    local mx, my = love.mouse.getPosition()
+    local nx, ny = mx / sw, my / sh
+
     local isFullscreen = love.window.getFullscreen()
     love.window.setFullscreen(not isFullscreen, "desktop")
+
+    local nw, nh = love.graphics.getWidth(), love.graphics.getHeight()
+    love.mouse.setPosition(math.floor(nx * nw), math.floor(ny * nh))
 end
 
 function Window.getDimensions()

@@ -1,6 +1,7 @@
 local Button   = require "src.ui.button"
 local State    = require "src.ui.state"
 local Settings = require "src.settings.settings"
+local Info     = require "src.info"
 local rgb_text = require "src.ui.utils.rgb_text"
 local draw     = require "src.ui.utils.draw"
 local theme    = require "src.ui.utils.theme"
@@ -91,6 +92,12 @@ function MainMenu.draw()
     local scale = _github_icon.size / _github_img:getWidth()
     love.graphics.setColor(_github_icon.hovered and theme.color.text or theme.color.github_dim)
     love.graphics.draw(_github_img, _github_icon.x, _github_icon.y, 0, scale, scale)
+
+    -- Version hint (top-right)
+    love.graphics.setFont(_hint_font)
+    love.graphics.setColor(theme.color.text_hint)
+    local ver = "v" .. Info.VERSION
+    love.graphics.print(ver, sw - theme.size.hint_margin_x - _hint_font:getWidth(ver), 9)
 
     -- Bottom hint
     love.graphics.setFont(_hint_font)

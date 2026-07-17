@@ -1,5 +1,6 @@
 local Button   = require "src.ui.button"
 local State    = require "src.ui.state"
+local Info     = require "src.info"
 local Settings = require "src.settings.settings"
 local Window   = require "src.settings.window"
 local Debug    = require "src.settings.debug"
@@ -349,6 +350,12 @@ function SettingsUI.draw()
     end
 
     _back_btn:draw(_fonts.label)
+
+    -- Version hint (top-right)
+    love.graphics.setFont(_fonts.hint)
+    love.graphics.setColor(theme.color.text_hint)
+    local ver = "v" .. Info.VERSION
+    love.graphics.print(ver, sw - theme.size.hint_margin_x - _fonts.hint:getWidth(ver), 9)
 
     love.graphics.setFont(_fonts.hint)
     love.graphics.setColor(theme.color.text_muted)

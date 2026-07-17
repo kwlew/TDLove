@@ -37,7 +37,7 @@ function InGame.draw()
     -- Center placeholder label
     love.graphics.setFont(_hud_font)
     love.graphics.setColor(theme.color.text_faint)
-    local msg = "[ Game World Placeholder ]"
+    local msg = "69"
     love.graphics.print(msg, math.floor(sw / 2 - _hud_font:getWidth(msg) / 2), math.floor(sh / 2 - theme.size.placeholder_y_offset))
 
     -- Bottom hint
